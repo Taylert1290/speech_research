@@ -75,8 +75,10 @@ class TextGeneration(object):
         text = [inputword_1, inputword_2]
         while not sentence_finished:
             accumulator = 0
-            text_keys = list(self.generation_model[tuple(text[-2:])].keys())
-            if len(text_keys) > 0:
+            token_dict = self.generation_model[tuple(text[-2:])]
+            sorted_tuple = sorted(token_dict.items(), key=lambda kv: kv[1])
+            keys = [x[0] for x in sorted_tuple]
+            if len(keys) > 0:
                 word = list(self.generation_model[tuple(text[-2:])].keys())[0]
                 accumulator += self.generation_model[tuple(text[-2:])][word]
                 text.append(word)
@@ -93,7 +95,7 @@ if __name__ == "__main__":
     text = df["OriginalTweet"]
     text_model = WordProbabilities().fit_transform(corpus=text)
     generator_model = TextGeneration(generation_model=text_model)
-    examples = [("today", "the"), ("the", "virus"), ("we", "are"), ("this", "is")]
+    examples = [("today", "the"), ("the", "virus"), ("we", "are"), ("this", "is"),('the','people')]
     with open("generated_text.txt", "w") as f:
         for example in examples:
 
