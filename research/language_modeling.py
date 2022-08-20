@@ -95,8 +95,14 @@ if __name__ == "__main__":
     text = df["OriginalTweet"]
     text_model = WordProbabilities().fit_transform(corpus=text)
     generator_model = TextGeneration(generation_model=text_model)
-    examples = [("today", "the"), ("the", "virus"), ("we", "are"), ("this", "is"),('the','people')]
-    with open("generated_text.txt", "w") as f:
+    examples = [
+        ("today", "the"),
+        ("the", "virus"),
+        ("we", "are"),
+        ("this", "is"),
+        ("the", "people"),
+    ]
+    with open("../text_output/generated_text.txt", "w") as f:
         for example in examples:
 
             generated_text = generator_model.generate(
