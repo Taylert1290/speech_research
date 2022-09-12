@@ -4,7 +4,7 @@ import re
 from tqdm import tqdm
 from keras.utils import to_categorical
 from keras.utils import pad_sequences
-import keras
+from keras.models import load_model
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, GRU, Embedding
 from keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -49,10 +49,12 @@ class DataSetup(object):
 
 
 class TextGeneration(object):
-    def __init__(self, max_len, vocab_size, embedding_size):
+    def __init__(self, max_len, vocab_size, embedding_size, initialze_trained_model=True):
         self.max_len = max_len
         self.vocab_size = vocab_size
         self.embedding_size = embedding_size
+        if initialze_trained_model:
+            self.pretrained_model = load_model('../saved_models/weights-improvement-10-2.0079.hdf5')
 
     def model(self):
         model = Sequential()
@@ -71,6 +73,7 @@ class TextGeneration(object):
         callbacks_list = [checkpoint]
         model.fit(X, y, epochs=10, batch_size=128, callbacks=callbacks_list)
 
+
     def predict(self):
         pass
 
@@ -80,7 +83,6 @@ if __name__ == "__main__":
     text = df["OriginalTweet"]
     ds = DataSetup(max_length=100)
     X, y = ds.build_data(text)
-    print(len(X))
     char_to_id, id_to_char = ds.character_map(corpus=text)
     model = TextGeneration(max_len=100, vocab_size=27, embedding_size=256)
     model.fit(X, y)
